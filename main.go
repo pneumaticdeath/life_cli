@@ -3,7 +3,10 @@ package main
 import (
   "flag"
   "fmt"
+  "log"
   "github.com/pneumaticdeath/golife"
+  "os"
+  "runtime/pprof"
   "strings"
 )
 
@@ -38,8 +41,20 @@ func main() {
     outputfilePtr := flag.String("output", "", "File to write output to")
     displayPtr := flag.Bool("display", false, "Display steps")
     generationsPtr := flag.Int("generations", 100, "Number of generations to run")
+    pprofPtr := flag.String("pprof", "", "Write profiling output to file")
 
     flag.Parse()
+
+    if *pprofPtr != "" {
+        f, err := os.Create(*pprofPtr)
+        if err != nil {
+            log.Fatal(err)
+        }
+        defer f.Close()
+
+        pprof.StartCPUProfile(f)
+        defer pprof.StopCPUProfile()
+    }
 
     if *inputfilePtr != "" {
         g = golife.Load(*inputfilePtr)
