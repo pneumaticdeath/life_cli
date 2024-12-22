@@ -17,7 +17,7 @@ func display(g *golife.Game) {
     fmt.Printf("Generation %d\n", g.Generation)
     if max_cell.X >= min_cell.X {
         fmt.Println("Bounding Box",min_cell,"to",max_cell)
-        var x, y int64
+        var x, y golife.Coord
         fmt.Printf("+%s+\n", strings.Repeat("-", int(width * 2 - 1)))
         for y = min_cell.Y; y <= max_cell.Y; y++ {
             cell_line := make([]string, width)
