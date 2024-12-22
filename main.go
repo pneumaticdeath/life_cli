@@ -1,14 +1,14 @@
 package main
 
 import (
+  "flag"
   "fmt"
   "github.com/pneumaticdeath/golife"
-  "os"
   "strings"
 )
 
 func display(g *golife.Game) {
-    min_cell, max_cell := g.BoundingBox()
+    min_cell, max_cell := g.Population.BoundingBox()
     width := max_cell.X - min_cell.X + 1
 
     fmt.Printf("Generation %d\n", g.Generation)
@@ -34,8 +34,15 @@ func display(g *golife.Game) {
 func main() {
     var g *golife.Game
 
-    if len(os.Args) > 1 {
-        g = golife.Load(os.Args[1])
+    inputfilePtr := flag.String("input", "", "File to read in")
+    outputfilePtr := flag.String("output", "", "File to write output to")
+    displayPtr := flag.Bool("display", false, "Display steps")
+    generationsPtr := flag.Int("generations", 100, "Number of generations to run")
+
+    flag.Parse()
+
+    if *inputfilePtr != "" {
+        g = golife.Load(*inputfilePtr)
     } else {
         cells := []golife.Cell{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {2, 1}}
         g = &golife.Game{}
@@ -43,9 +50,16 @@ func main() {
         g.Population.Add(cells)
     }
 
-    for i := 0; i < 100 && len(g.Population) > 0; i++ {
-        display(g)
+    for i := 0; i < *generationsPtr && len(g.Population) > 0; i++ {
+        if *displayPtr {
+            display(g)
+        }
         g.Next()
     }
-    display(g)
+    if *displayPtr {
+        display(g)
+    }
+    if *outputfilePtr != "" {
+        _ = g.SaveRLE(*outputfilePtr)
+    }
 }
