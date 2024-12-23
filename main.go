@@ -60,9 +60,8 @@ func main() {
         g = golife.Load(*inputfilePtr)
     } else {
         cells := []golife.Cell{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {2, 1}}
-        g = &golife.Game{}
-        g.Init()
-        g.Population.Add(cells)
+        g = golife.NewGame()
+        g.AddCells(cells)
     }
 
     for i := 0; i < *generationsPtr && len(g.Population) > 0; i++ {
