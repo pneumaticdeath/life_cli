@@ -10,6 +10,12 @@ import (
   "strings"
 )
 
+func check(e error) {
+    if e != nil {
+        panic(e)
+    }
+}
+
 func display(g *golife.Game) {
     min_cell, max_cell := g.Population.BoundingBox()
     width := max_cell.X - min_cell.X + 1
@@ -56,8 +62,10 @@ func main() {
         defer pprof.StopCPUProfile()
     }
 
+    var err error
     if *inputfilePtr != "" {
-        g = golife.Load(*inputfilePtr)
+        g, err = golife.Load(*inputfilePtr)
+        check(err)
     } else {
         cells := []golife.Cell{{0, 0}, {0, 1}, {0, 2}, {1, 0}, {2, 1}}
         g = golife.NewGame()
@@ -74,6 +82,7 @@ func main() {
         display(g)
     }
     if *outputfilePtr != "" {
-        _ = g.SaveRLE(*outputfilePtr)
+        err = g.SaveRLE(*outputfilePtr)
+        check(err)
     }
 }
